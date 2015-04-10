@@ -11,7 +11,7 @@
     -C --cluster                           Calculate cluster address from logical or physical address.
     -b OFFSET, --partition-start OFFSET     Specifies physical address of start partition [default: 0].
     -B, --byte-address                      Instead of returning sector values, this returns byte address.
-    -s BYTES, --sector-size BYTES           Specification of bytes per sector other that default 512.
+    -s BYTES, --sector-size BYTES           Specification of bytes per sector other than default [default: 512].
     -l LOGADDR, --logical-known LOGADDR     Specifies known logical address.
     -p PHYADDR, --physical-known PHYADDR    Specifies known physical address.
     -c CLUADDR, --cluster-known CLUADDR     Specifies known cluster address.
@@ -29,23 +29,32 @@ if __name__ == '__main__':
     print(arguments)
 
 byteOffset = int(arguments['--partition-start'])
+bytes = int(arguments['--sector-size'])
 
 if arguments['--logical']:
-  print("logical")
   if arguments['--physical-known'] != None:
     physAddress = int(arguments['--physical-known'])
-    print(physAddress - byteOffset)
+    if arguments['--byte-address'] == False:
+      print(physAddress - byteOffset)
+    elif arguments['--byte-address'] == True:
+      print((physAddress - byteOffset) * bytes)
   elif arguments['--cluster-known'] != None:
-    print(arguments['--cluster-known'])
     clusAddr = int(arguments['--cluster-known'])
     clusSize = int(arguments['--cluster-size'])
     reserved = int(arguments['--reserved'])
     fatTables = int(arguments['--fat-tables'])
     fatLength = int(arguments['--fat-length'])
+    if arguments['--byte-address'] == False:
+      print(reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize) - byteOffset)
+    elif arguments['--byte-address'] == True:
+      print(bytes * (reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize) - byteOffset))
 elif arguments['--physical']:
-  print("physical")
   if arguments['--logical-known'] != None:
-    print(arguments['--logical-known'])
+    logKnown = int(arguments['--logical-known'])
+    if arguments['--byte-address'] == False:
+      print(logKnown + byteOffset)
+    elif arguments['--byte-address'] == True:
+      print((logknown + byteOffset) * bytes)
   elif arguments['--cluster-known'] != None:
     print(arguments['--cluster-known'])
     clusAddr = int(arguments['--cluster-known'])
@@ -53,7 +62,13 @@ elif arguments['--physical']:
     reserved = int(arguments['--reserved'])
     fatTables = int(arguments['--fat-tables'])
     fatLength = int(arguments['--fat-length'])
-    result = byteOffset + reserved + (fat-tables * fat-length) + ((clusAddr - 2) * clusSize)
-    print(result)
+    if arguments['--byte-address'] == False:
+      print(byteOffset + reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize))
+    elif arguments['--byte-address'] == True:
+      print(bytes * (byteOffset + reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize))
 elif arguments['--cluster']:
   print("cluster")
+  if arguments['--logical-known'] != None:
+    print(arguments['--logical-known'])
+  elif arguments['--physical-known'] != None:
+    print(arguments['--physical-known'])
