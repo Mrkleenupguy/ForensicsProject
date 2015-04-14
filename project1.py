@@ -17,7 +17,11 @@ filesystems = {'01':'DOS 12-BIT FAT',
 			   '17':'Hidden NTFS Parition (XP and earlier',
 			   '1b':'Hidden FAT32 Partition',
 			   '1e':'Hidden VFAT Partition',
-			   '3c':'Partition Magic Recovery Partition'}
+			   '3c':'Partition Magic Recovery Partition',
+			   '66':'Novell',
+			   '67':'Novell',
+			   '68':'Novell',
+			   '69':'Novell'}
 
 # Filepath is hard coded to cut down on test time
 #filepath = input("Enter file path: ")
@@ -36,14 +40,15 @@ print(sha1hash.hexdigest())
 
 def partitionEntry(entry):
 	"Displays parition entry information"
-	print(binascii.hexlify(entry[0]))
-	print(binascii.hexlify(entry[1]))
-	print(binascii.hexlify(entry[2:4]))
-	print(filesystems[binascii.hexlify(entry[4])])
-	print(binascii.hexlify(entry[5]))
-	print(binascii.hexlify(entry[6:8]))
-	print(binascii.hexlify(entry[11:7:-1]))
-	print(binascii.hexlify(entry[15:11:-1]))
+	print(binascii.hexlify(entry[0])) #Current State of Partition
+	print(binascii.hexlify(entry[1])) #Beginning of Partition - Head
+	print(binascii.hexlify(entry[2:4])) #Beginning of Partition -Cylinder/Sector
+	partType = filesystems[binascii.hexlify(entry[4])] #Type of Partition
+	print(binascii.hexlify(entry[5])) #End of Partition - Head
+	print(binascii.hexlify(entry[6:8])) #End of Partition - Cylinder/Sector
+	startSector = int(binascii.hexlify(entry[11:7:-1]), 16)
+	sectorSize = int(binascii.hexlify(entry[15:11:-1]), 16)
+	print("({}) {}, {}, {}".format(binascii.hexlify(entry[4]), partType, startSector, sectorSize))
 	return
 
 # Analysis Section
@@ -64,3 +69,5 @@ print(binascii.hexlify(fourthPartiion))
 print(binascii.hexlify(brs))
 partitionEntry(firstPartition)
 partitionEntry(secondPartition)
+partitionEntry(thirdPartiion)
+partitionEntry(fourthPartiion)
