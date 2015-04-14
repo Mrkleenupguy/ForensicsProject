@@ -20,13 +20,20 @@ with open('TestImage1.img', 'rb') as f:
 print(md5hash.hexdigest())
 print(sha1hash.hexdigest())
 """
+def fromLittleEndian(bytes):
+	""
+	result = ""
+	for i in range(0,len(bytes),2):
+		result = result + bytes[i+1] + bytes[i]
+	return result[::-1]
 
+def mbrAnalysis(mbr):
+	return
 # Analysis Section
 # **Change filepath if img is not in the same directory
-with open('TestImage1.img', 'rb') as f:
-	block = f.read(48*2)
-#print(block)
-#print(binascii.hexlify(block))
-vbr = binascii.hexlify(block[0:36*2])
-for x in range(0,80,32):
-	print("{} {}".format(vbr[x:x+16], vbr[x+16:x+32]))
+with open('C:\Users\John Jesse\Desktop\TestImage1.img', 'rb') as f:
+	block = f.read(512)
+	byteblock = binascii.hexlify(block)
+#vbr = binascii.hexlify(block[0:80])
+#for x in range(0,80,32):
+#	print("{} {}".format(vbr[x:x+16], vbr[x+16:x+32]))
