@@ -56,7 +56,6 @@ elif arguments['--physical']:
     elif arguments['--byte-address'] == True:
       print((logknown + byteOffset) * bytes)
   elif arguments['--cluster-known'] != None:
-    print(arguments['--cluster-known'])
     clusAddr = int(arguments['--cluster-known'])
     clusSize = int(arguments['--cluster-size'])
     reserved = int(arguments['--reserved'])
@@ -70,5 +69,14 @@ elif arguments['--cluster']:
   print("cluster")
   if arguments['--logical-known'] != None:
     print(arguments['--logical-known'])
+    logKnown = int(arguments['--logical-known'])
+    if arguments['--byte-address'] == False:
+
+    elif arguments['--byte-address'] == True:
+
   elif arguments['--physical-known'] != None:
     print(arguments['--physical-known'])
+     if arguments['--byte-address'] == False:
+
+     elif arguments['--byte-address'] == True:
+
