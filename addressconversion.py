@@ -64,19 +64,19 @@ elif arguments['--physical']:
     if arguments['--byte-address'] == False:
       print(byteOffset + reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize))
     elif arguments['--byte-address'] == True:
-      print(bytes * (byteOffset + reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize))
+      print(bytes * (byteOffset + reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize)))
 elif arguments['--cluster']:
   print("cluster")
   if arguments['--logical-known'] != None:
     print(arguments['--logical-known'])
     logKnown = int(arguments['--logical-known'])
     if arguments['--byte-address'] == False:
-
+      print("test1")
     elif arguments['--byte-address'] == True:
-
+      print("test1")
   elif arguments['--physical-known'] != None:
     print(arguments['--physical-known'])
-     if arguments['--byte-address'] == False:
-
-     elif arguments['--byte-address'] == True:
-
+    if arguments['--byte-address'] == False:
+      print("test1")
+    elif arguments['--byte-address'] == True:
+      print("test1")
