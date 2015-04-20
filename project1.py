@@ -37,6 +37,9 @@ with open('TestImage1.img', 'rb') as f:
 print(md5hash.hexdigest())
 print(sha1hash.hexdigest())
 """
+
+startSectors = [];
+
 def fromLittleEndian(bytes):
 	""
 	result = ""
@@ -49,23 +52,27 @@ def mbrAnalysis(mbr):
 
 def partitionEntry(entry):
 	"Displays parition entry information"
-	print(binascii.hexlify(entry[0])) #Current State of Partition
-	print(binascii.hexlify(entry[1])) #Beginning of Partition - Head
+	#print(binascii.hexlify(entry[0])) #Current State of Partition
+	#print(binascii.hexlify(entry[1])) #Beginning of Partition - Head
 	print(binascii.hexlify(entry[2:4])) #Beginning of Partition -Cylinder/Sector
+	print(int(binascii.hexlify(entry[2:4]), 16))
 	partType = filesystems[binascii.hexlify(entry[4])] #Type of Partition
-	print(binascii.hexlify(entry[5])) #End of Partition - Head
+	#print(binascii.hexlify(entry[5])) #End of Partition - Head
 	print(binascii.hexlify(entry[6:8])) #End of Partition - Cylinder/Sector
-	startSector = int(binascii.hexlify(entry[11:7:-1]), 16)
+	print(int(binascii.hexlify(entry[6:8]), 16))
+	startSectorAddr = int(binascii.hexlify(entry[11:7:-1]), 16)
+	startSectors.append(startSectorAddr);
 	sectorSize = int(binascii.hexlify(entry[15:11:-1]), 16)
-	print("({}) {}, {}, {}".format(binascii.hexlify(entry[4]), partType, startSector, sectorSize))
+	print("({}) {}, {}, {}".format(binascii.hexlify(entry[4]), partType, startSectorAddr, sectorSize))
 	return
 
 # Analysis Section
 # **Change filepath if img is not in the same directory
 with open('C:\Users\John Jesse\Desktop\TestImage1.img', 'rb') as f:
 	block = f.read(512)
-executionCode = block[0:446]
-firstPartition = block[446:462]
+	otherblock = f.read()
+executionCode = block[0:446] # this is just code that used to boot up, probably won't use this
+firstPartition = block[446:462] 
 secondPartition = block[462:478]
 thirdPartiion = block[478:494]
 fourthPartiion = block[494:510]
@@ -80,3 +87,5 @@ partitionEntry(firstPartition)
 partitionEntry(secondPartition)
 partitionEntry(thirdPartiion)
 partitionEntry(fourthPartiion)
+print(startSectors)
+print(len(otherblock) / 512)
