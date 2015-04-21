@@ -1,10 +1,8 @@
 """MAC Address Conversion 1.0
 
 Usage:
-  macconv.py -T -f FILENAME
-  macconv.py -T -x VAL
-  macconv.py -D -f FILENAME
-  macconv.py -D -x VAL
+  macconv.py -T (-f FILENAME | -x VAL)
+  macconv.py -D (-f FILENAME | -x VAL)
 
 Options:
   -T  Uses time conversion module.
@@ -22,6 +20,12 @@ if __name__ == '__main__':
     print(arguments)
 
 if arguments['-T']:
-  with open('C:\Users\Jesse Laptop\Desktop\example.txt', 'r') as f:
-    hexcode = f.read()
-    print(hexcode)
+  if arguments['--file'] != None:
+    print('-T -f')
+  elif arguments['--hex'] != None:
+    print('-T -x')
+elif arguments['-D']:
+  if arguments['--file'] != None:
+    print('-D -f')
+  elif arguments['--hex'] != None:
+    print('-D -x')
