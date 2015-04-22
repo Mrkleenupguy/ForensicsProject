@@ -29,3 +29,29 @@ elif arguments['-D']:
     print('-D -f')
   elif arguments['--hex'] != None:
     print('-D -x')
+    
+dir(bytes);
+
+hex_time1 = b'53 f6';
+
+hex_time1 = hex_time1.replace(b' ',b'');
+
+
+print(hex_time1);
+
+#10:31:44
+val1 = int(hex_time1, 16);
+print((val1 & 0b11111)*2);
+print((val1 >> 5) & 0b111111);
+print((val1 >> 11) & 0b11111);
+
+hex_date1 = b'42 4f';
+hex_date1 = hex_date1.replace(b' ', b'');
+
+print(hex_date1);
+
+#Feb 15, 2013
+val2 = int(hex_date1, 16);
+print(val2 & 0b11111);
+print((val2 >> 5) & 0b1111);
+print(((val2 >> 9) & 0b1111111) + 1980);
