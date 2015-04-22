@@ -2,6 +2,7 @@ __author__ = 'Jesse'
 
 import hashlib
 import binascii
+import os
 
 md5hash = hashlib.md5()
 sha1hash = hashlib.sha1()
@@ -32,14 +33,6 @@ filesystems = {'01':'DOS 12-BIT FAT',
 
 # MD5 SHA1 hash section commented out to cut down on run time while
 # working on analysis section
-"""
-with open('TestImage1.img', 'rb') as f:
-    fileContents = f.read(512)
-    md5hash.update(fileContents)
-    sha1hash.update(fileContents)
-print(md5hash.hexdigest())
-print(sha1hash.hexdigest())
-"""
 
 startSectors = [];
 partitionTypes = [];
@@ -79,21 +72,33 @@ def vbrAnalysis(vbr, partNum):
 	print('Sectors per cluster: {}'.format(sectorsPerCluster))
 	if (sizeOfFAT == 0):
 		print('FAT area: Start sector: {} Ending sector: {}'.format(resSize, resSize+(sizeOfFAT32*2)-1))
+		print('Number of FATs: {}'.format(numOfFATS))
+		print('The size of each FAT: {}'.format(sizeOfFAT32))
+		print('The first sector cluster 2: {}'.format(resSize+(sizeOfFAT32*2)+startSectors[partNum]))
 	else:
 		print('FAT area: Start sector: {} Ending sector: {}'.format(resSize, resSize+(sizeOfFAT*2)-1))
-	print('Number of FATs: {}'.format(numOfFATS))
-	if (sizeOfFAT == 0):
-		print('The size of each FAT: {}'.format(sizeOfFAT32))
-	else:
+		print('Number of FATs: {}'.format(numOfFATS))
 		print('The size of each FAT: {}'.format(sizeOfFAT))
-	print('The first sector cluster 2: ')
+		print('The first sector cluster 2: {}'.format(resSize+(sizeOfFAT*2)+startSectors[partNum]+((maxFiles*32)/bytesPerSector)))
 	return
+
+"""
+
+"""
 
 # Analysis Section
 # **Change filepath if img is not in the same directory
-with open('C:\Users\John Jesse\Desktop\TestImage1.img', 'rb') as f:
+filename = raw_input('Enter file path: ')
+
+with open(filename, 'rb') as f:
+    fileContents = f.read()
+    md5hash.update(fileContents)
+    sha1hash.update(fileContents)
+print(md5hash.hexdigest())
+print(sha1hash.hexdigest())
+
+with open(filename, 'rb') as f:
 	diskImg = f.read()
-	#otherblock = f.read()
 executionCode = diskImg[0:446] # this is just code that used to boot up, probably won't use this
 firstPartition = diskImg[446:462] 
 secondPartition = diskImg[462:478]
@@ -106,8 +111,14 @@ partitionEntry(secondPartition)
 partitionEntry(thirdPartiion)
 partitionEntry(fourthPartiion)
 
+newFileName = os.path.basename(filename).split('.')[0]
+print('MD5-' + newFileName + '.txt')
+print('SHA-' + newFileName + '.txt')
+
 print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 for x in range(0, len(startSectors)):
 	#print(binascii.hexlify(diskImg[(startSectors[x])*512:(startSectors[x]+1)*512]))
-	vbrAnalysis(diskImg[(startSectors[x])*512:(startSectors[x]+1)*512], x)
-	print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+	if (partitionTypes[x] == filesystems['04'] or partitionTypes[x] == filesystems['06'] or
+		 partitionTypes[x] == filesystems['0b'] or partitionTypes[x] == filesystems['0c']):
+		vbrAnalysis(diskImg[(startSectors[x])*512:(startSectors[x]+1)*512], x)
+		print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
