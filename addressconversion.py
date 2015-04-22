@@ -3,7 +3,7 @@
   Usage:
     addressconversion.py -L [-b OFFSET] [-B [-s BYTES]] (-p PHYADDR | -c CLUADDR -k CLUSECT -r RESSECT -t TABLES -f FATSECT)
     addressconversion.py -P [-b OFFSET] [-B [-s BYTES]] (-l LOGADDR | -c CLUADDR -k CLUSECT -r RESSECT -t TABLES -f FATSECT)
-    addressconversion.py -C [-b OFFSET] [-B [-s BYTES]] (-l LOGADDR | -p PHYADDR)
+    addressconversion.py -C [-b OFFSET] [-B [-s BYTES]] (-l LOGADDR | -p PHYADDR) -k CLUSECT -r RESSECT -t TABLES -f FATSECT
 
   Options:
     -L --logical                           Calculate logical address from cluster or physical address.
