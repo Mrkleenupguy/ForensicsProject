@@ -26,7 +26,6 @@ from docopt import docopt
 
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Address Conversion Utility 1.0')
-    print(arguments)
 
 byteOffset = int(arguments['--partition-start'])
 bytes = int(arguments['--sector-size'])
@@ -54,7 +53,7 @@ elif arguments['--physical']:
     if arguments['--byte-address'] == False:
       print(logKnown + byteOffset)
     elif arguments['--byte-address'] == True:
-      print((logknown + byteOffset) * bytes)
+      print((logKnown + byteOffset) * bytes)
   elif arguments['--cluster-known'] != None:
     clusAddr = int(arguments['--cluster-known'])
     clusSize = int(arguments['--cluster-size'])
@@ -66,17 +65,19 @@ elif arguments['--physical']:
     elif arguments['--byte-address'] == True:
       print(bytes * (byteOffset + reserved + (fatTables * fatLength) + ((clusAddr - 2) * clusSize)))
 elif arguments['--cluster']:
-  print("cluster")
+    clusSize = int(arguments['--cluster-size'])
+    reserved = int(arguments['--reserved'])
+    fatTables = int(arguments['--fat-tables'])
+    fatLength = int(arguments['--fat-length'])
   if arguments['--logical-known'] != None:
-    print(arguments['--logical-known'])
     logKnown = int(arguments['--logical-known'])
     if arguments['--byte-address'] == False:
-      print("test1")
+      print(logKnown - (((reserved + (fatTables * fatLength)) / clusSize) + 2) )
     elif arguments['--byte-address'] == True:
-      print("test1")
+      print(bytes * (logKnown - (((reserved + (fatTables * fatLength)) / clusSize) + 2)) )
   elif arguments['--physical-known'] != None:
-    print(arguments['--physical-known'])
+    physAddress = int(arguments['--physical-known'])
     if arguments['--byte-address'] == False:
-      print("test1")
+      print((physAddress - byteOffset) - (((reserved + (fatTables * fatLength)) / clusSize) + 2))
     elif arguments['--byte-address'] == True:
-      print("test1")
+      print(bytes * ((physAddress - byteOffset) - (((reserved + (fatTables * fatLength)) / clusSize) + 2)))

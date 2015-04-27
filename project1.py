@@ -25,29 +25,22 @@ filesystems = {'01':'DOS 12-BIT FAT',
 			   '69':'Novell',
 			   '81':'Linux',
 			   '82':'Linux swap parition (can also be associated with Solaris partitions)',
-			   '83':'Linux native file systems (Ext2, Ext3, Reiser, xiafs)'}
-
-# Filepath is hard coded to cut down on test time
-#filepath = input("Enter file path: ")
-#print(filepath)
-
-# MD5 SHA1 hash section commented out to cut down on run time while
-# working on analysis section
+			   '83':'Linux native file systems (Ext2, Ext3, Reiser, xiafs)',
+			   '86':'FAT 16 volume/stripe set (Windows NT)',
+			   '87':'High Performance File System (HPFS) fault-tolerant mirrored partition or NTFS volme/stripe set',
+			   'A5':'FreeBSD and BSD/386',
+			   'A6':'OpenBSD',
+			   'A9':'NetBSD',
+			   'C7':'Typical of a corrupted NTFS volume/stripe set',
+			   'EB':'BeOS'}
 
 startSectors = [];
 partitionTypes = [];
 
 def partitionEntry(entry):
 	"Displays parition entry information"
-	#print(binascii.hexlify(entry[0])) #Current State of Partition
-	#print(binascii.hexlify(entry[1])) #Beginning of Partition - Head
-	#print(binascii.hexlify(entry[2:4])) #Beginning of Partition -Cylinder/Sector
-	#print(int(binascii.hexlify(entry[2:4]), 16))
 	partType = filesystems[binascii.hexlify(entry[4])] #Type of Partition
 	partitionTypes.append(partType)
-	#print(binascii.hexlify(entry[5])) #End of Partition - Head
-	#print(binascii.hexlify(entry[6:8])) #End of Partition - Cylinder/Sector
-	#print(int(binascii.hexlify(entry[6:8]), 16))
 	startSectorAddr = int(binascii.hexlify(entry[11:7:-1]), 16)
 	startSectors.append(startSectorAddr);
 	sectorSize = int(binascii.hexlify(entry[15:11:-1]), 16)
@@ -87,15 +80,26 @@ def vbrAnalysis(vbr, partNum):
 """
 
 # Analysis Section
-# **Change filepath if img is not in the same directory
 filename = raw_input('Enter file path: ')
+newFileName = os.path.basename(filename).split('.')[0]
+filePath = os.path.dirname(filename) + '\\'
+sha1FileName = 'MD5-' + newFileName + '.txt'
+md5FileName = 'SHA-' + newFileName + '.txt'
 
 with open(filename, 'rb') as f:
     fileContents = f.read()
     md5hash.update(fileContents)
     sha1hash.update(fileContents)
-print(md5hash.hexdigest())
-print(sha1hash.hexdigest())
+md5digest = md5hash.hexdigest()
+shadigest = sha1hash.hexdigest()
+
+# Hash results are stored in separate text files, but they are
+# in the same directory as the disk image file
+with open((filePath + sha1FileName), 'w') as sha1File:
+	sha1File.write(shadigest)
+with open((filePath + md5FileName), 'w') as md5File:
+	md5File.write(md5digest)
+
 
 with open(filename, 'rb') as f:
 	diskImg = f.read()
@@ -111,13 +115,8 @@ partitionEntry(secondPartition)
 partitionEntry(thirdPartiion)
 partitionEntry(fourthPartiion)
 
-newFileName = os.path.basename(filename).split('.')[0]
-print('MD5-' + newFileName + '.txt')
-print('SHA-' + newFileName + '.txt')
-
 print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 for x in range(0, len(startSectors)):
-	#print(binascii.hexlify(diskImg[(startSectors[x])*512:(startSectors[x]+1)*512]))
 	if (partitionTypes[x] == filesystems['04'] or partitionTypes[x] == filesystems['06'] or
 		 partitionTypes[x] == filesystems['0b'] or partitionTypes[x] == filesystems['0c']):
 		vbrAnalysis(diskImg[(startSectors[x])*512:(startSectors[x]+1)*512], x)
